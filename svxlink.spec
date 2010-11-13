@@ -15,6 +15,7 @@ Group:		Networking/Other
 #the rest of files are licensed under GPLv2+
 License:	GPLv2 and GPLv2+
 
+BuildRequires:	glibc-devel
 BuildRequires:	%{_lib}sigc++1.2_5-devel
 BuildRequires:	mng-devel
 BuildRequires:	tcl-devel
