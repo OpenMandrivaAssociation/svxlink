@@ -16,6 +16,7 @@ Group:		Networking/Other
 License:	GPLv2 and GPLv2+
 
 BuildRequires:	glibc-devel
+BuildRequires:	alsa2-devel
 BuildRequires:	%{_lib}sigc++1.2_5-devel
 BuildRequires:	mng-devel
 BuildRequires:	tcl-devel
