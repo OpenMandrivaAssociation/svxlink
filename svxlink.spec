@@ -100,7 +100,7 @@ Development files for the EchoLink communications library
 
 %package -n qtel
 Summary: 	The Qt EchoLink Client
-Group: 		Applications/Communications
+Group: 		Communications
 Version: 	0.11.2
 
 %description -n qtel
