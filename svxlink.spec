@@ -43,7 +43,7 @@ Mandriva Distributions.
 
 %package -n libasync
 Summary: 	Svxlink async libs
-Group: 		Development/Libraries
+Group: 		System/Libraries
 Version: 	0.17.0
 
 %description -n libasync
@@ -67,7 +67,7 @@ Mandriva Distributions.
 
 %package -n libasync-devel
 Summary: 	Svxlink async development files
-Group: 		Development/Libraries
+Group: 		System/Libraries
 Version: 	0.17.0
 Requires: 	libasync = 0.17.0
 Obsoletes:	svxlink-server-devel < 0.11.1-2
@@ -77,7 +77,7 @@ The async library development files
 
 %package -n echolib
 Summary: 	EchoLink communications library
-Group: 		Development/Libraries
+Group: 		System/Libraries
 Version: 	0.13.1
 
 %description -n echolib
@@ -90,7 +90,7 @@ Mandriva Distributions.
 
 %package -n echolib-devel
 Summary: 	Development files for the EchoLink communications library
-Group: 		Development/Libraries
+Group: 		System/Libraries
 Version: 	0.13.1
 Requires: 	echolib = 0.13.1
 Obsoletes:	svxlink-server-devel < 0.11.1-2
@@ -114,7 +114,7 @@ Mandriva Distributions.
 %package -n svxlink-server
 Summary: 	SvxLink - A general purpose voice services system
 Version: 	0.11.1
-Group: 		Applications/Communications
+Group: 		Networking/Other
 Requires: 	udev
 Requires (pre): shadow-utils
 
