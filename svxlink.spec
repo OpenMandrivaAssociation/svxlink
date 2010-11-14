@@ -1,6 +1,6 @@
 ## Specfile based on Fedora made by developper
 %define name	svxlink
-%define main_version 101108
+%define main_version 131108
 
 Name:		%{name}
 Summary:	Repeater controller and EchoLink (simplex or repeater)
