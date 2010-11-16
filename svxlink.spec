@@ -5,19 +5,19 @@
 Name:		%{name}
 Summary:	Repeater controller and EchoLink (simplex or repeater)
 Version:	%{main_version}
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:	http://downloads.sourceforge.net/%{name}/sounds-%{version}.tar.gz
 URL:		http://svxlink.sourceforge.net
 
-Group:		Networking/Other
+Group:		Communications
 #files contained in sounds package are licensed under GPLv2
 #the rest of files are licensed under GPLv2+
 License:	GPLv2 and GPLv2+
 
 BuildRequires:	glibc-devel
-BuildRequires:	%{_lib}alsa2-devel
-BuildRequires:	%{_lib}sigc++1.2_5-devel
+BuildRequires:	libalsa-devel
+BuildRequires:	libsigc++1.2-devel
 BuildRequires:	mng-devel
 BuildRequires:	tcl-devel
 BuildRequires:	qt3-devel 
