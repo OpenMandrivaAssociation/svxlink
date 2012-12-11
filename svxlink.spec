@@ -1,30 +1,31 @@
 ## Specfile based on Fedora made by developper
 %define name	svxlink
-%define main_version 131108
+%define main_version 11.11.1
 
 Name:		%{name}
 Summary:	Repeater controller and EchoLink (simplex or repeater)
 Version:	%{main_version}
 Release:	%mkrel 2
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
-Source1:	http://downloads.sourceforge.net/%{name}/sounds-%{version}.tar.gz
+Source1:	http://downloads.sourceforge.net/%{name}/sounds-en_US-heather-11.11.tar.bz2
 URL:		http://svxlink.sourceforge.net
 
 Group:		Communications
 #files contained in sounds package are licensed under GPLv2
 #the rest of files are licensed under GPLv2+
 License:	GPLv2 and GPLv2+
+Patch0:		svxlink-11.11.1-gcc-47.patch
 
 BuildRequires:	glibc-devel
-BuildRequires:	libalsa-devel
+BuildRequires:	alsa-oss-devel
 BuildRequires:	libsigc++1.2-devel
 BuildRequires:	mng-devel
 BuildRequires:	tcl-devel
-BuildRequires:	qt3-devel 
+BuildRequires:	qt4-devel 
 BuildRequires:	gsm-devel
-BuildRequires:	libxi-devel
-BuildRequires:	popt-devel
-BuildRequires:	speex-devel
+BuildRequires:	pkgconfig(xi)
+BuildRequires:	pkgconfig(popt)
+BuildRequires:	pkgconfig(speex)
 BuildRequires:	doxygen
 BuildRequires:	desktop-file-utils
 BuildRequires:	%{_lib}gcrypt-devel
@@ -134,9 +135,13 @@ Mandriva Distributions.
 %prep
 %setup -q -n %{name}-%{main_version}
 %setup -q -D -T -a 1 -n %{name}-%{main_version}
-
+%patch0 -p0
 
 %build
+sed -i -e "s:/lib:/%{_libdir}:g" makefile.cfg
+sed -i -e "s:/etc/udev:/lib/udev:" svxlink/scripts/Makefile.default
+sed -i -e "s:lgsm:lgsm -lspeex:" qtel/Makefile.default
+
 #LDFLAGS="${LDFLAGS:--Wl,-as-needed}" ; export LDFLAGS
 CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS
 make %{?_smp_mflags}
@@ -145,32 +150,25 @@ doxygen doxygen.echolib
 
 
 %install
-rm -rf %{buildroot}
-make INSTALL_ROOT=$RPM_BUILD_ROOT NO_CHOWN=1 LIB_INSTALL_DIR=%{_libdir} \
-	INC_INSTALL_DIR=%{_includedir}/svxlink BIN_INSTALL_DIR=%{_bindir} \
-	SBIN_INSTALL_DIR=%{_sbindir} PLUGIN_INSTALL_DIR=%{_libdir}/svxlink install
+make DESTDIR=%{buildroot} NO_CHOWN=1 LIB_INSTALL_DIR=%{_libdir} \
+        INC_INSTALL_DIR=%{_includedir}/svxlink BIN_INSTALL_DIR=%{_bindir} \
+        SBIN_INSTALL_DIR=%{_sbindir} PLUGIN_INSTALL_DIR=%{_libdir}/svxlink install
 mkdir -p %{buildroot}%{_datadir}/svxlink
-cp -a sounds %{buildroot}%{_datadir}/svxlink/
+cp -a en_US-heather %{buildroot}%{_datadir}/svxlink/
 mkdir -p %{buildroot}%{_localstatedir}/log
 touch %{buildroot}%{_localstatedir}/log/svxlink
 touch %{buildroot}%{_localstatedir}/log/svxlink.{1,2,3,4}
 desktop-file-install \
-	--dir=%{buildroot}%{_datadir}/applications qtel/qtel.desktop
+        --dir=%{buildroot}%{_datadir}/applications qtel/qtel.desktop
 mv %{buildroot}%{_sysconfdir}/logrotate.d/svxlink %{buildroot}%{_sysconfdir}/logrotate.d/svxlink-server
 sed -i -e "s/subsys\/\$PROG/subsys\/svxlink/g" %{buildroot}%{_sysconfdir}/init.d/svxlink
 sed -i -e "s/subsys\/\$PROG/subsys\/remotetrx/g" %{buildroot}%{_sysconfdir}/init.d/remotetrx
 #remove static libs
 rm -f %{buildroot}%{_libdir}/libasync*.a
 rm -f %{buildroot}%{_libdir}/libecholib.a
-rm -f %{buildroot}%{_libdir}/libtrx.a
-#Next line added 11/13/2010
 rm -f %{buildroot}%{_libdir}/liblocationinfo.a
+rm -f %{buildroot}%{_libdir}/libtrx.a
 
-%post -n libasync -p /sbin/ldconfig
-%postun -n libasync -p /sbin/ldconfig
-
-%post -n echolib -p /sbin/ldconfig
-%postun -n echolib -p /sbin/ldconfig
 
 %pre -n svxlink-server
 getent group daemon >/dev/null || groupadd -r daemon
@@ -193,19 +191,13 @@ if [ "$1" -ge "1" ] ; then
  /sbin/service svxlink condrestart >/dev/null 2>&1 || :
 fi
 
-%clean
-rm -rf %{buildroot}
-
-
 %files -n libasync
-%defattr(-,root,root,-)
 %doc async/ChangeLog
 %defattr(755,root,root)
 %{_libdir}/libasync*.so.*
 %{_libdir}/libasync*.*.so
 
 %files -n libasync-devel
-%defattr(-,root,root,-)
 %doc doc/async/html
 %{_libdir}/libasyncaudio.so
 %{_libdir}/libasynccore.so
@@ -217,53 +209,50 @@ rm -rf %{buildroot}
 %{_includedir}/svxlink/common.h
 
 %files -n echolib
-%defattr(-,root,root,-)
 %doc echolib/ChangeLog
 %defattr(755,root,root)
 %{_libdir}/libecholib*.so.*
 %{_libdir}/libecholib*.*.so
 
 %files -n echolib-devel
-%defattr(-,root,root,-)
 %doc doc/echolib/html
 %{_libdir}/libecholib.so
 %dir %{_includedir}/svxlink
 %{_includedir}/svxlink/EchoLink*
 
 %files -n qtel
-%defattr(-,root,root,-)
-%doc qtel/ChangeLog
+%doc COPYRIGHT qtel/ChangeLog
 %{_bindir}/qtel
 %{_datadir}/qtel
 %{_datadir}/icons/link.xpm
 %{_datadir}/applications/qtel.desktop
 
 %files -n svxlink-server
-%defattr(-,root,root,-)
-%doc svxlink/ChangeLog
+%doc COPYRIGHT svxlink/ChangeLog
 %{_bindir}/svxlink
 %{_bindir}/remotetrx
 %{_bindir}/siglevdetcal
 %dir %{_libdir}/svxlink
 %{_libdir}/svxlink/Module*.so
-%dir %{_sysconfdir}/svxlink.d
+%dir %{_sysconfdir}/%{name}/svxlink.d
 %{_datadir}/svxlink
 %defattr(644,root,root)
-%config(noreplace) %{_sysconfdir}/svxlink.conf
-%config(noreplace) %{_sysconfdir}/svxlink.d/*
-%config(noreplace) %{_sysconfdir}/TclVoiceMail.conf
+%config(noreplace) %{_sysconfdir}/%{name}/svxlink.conf
+%config(noreplace) %{_sysconfdir}/%{name}/.procmailrc
+%config(noreplace) %{_sysconfdir}/%{name}/svxlink.d/*
+%config(noreplace) %{_sysconfdir}/%{name}/TclVoiceMail.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/svxlink-server
-%config(noreplace) %{_sysconfdir}/remotetrx.conf
+%config(noreplace) %{_sysconfdir}/logrotate.d/remotetrx
+%config(noreplace) %{_sysconfdir}/%{name}/remotetrx.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/svxlink
 %config(noreplace) %{_sysconfdir}/sysconfig/remotetrx
 %config(noreplace) %{_sysconfdir}/security/console.perms.d/90-svxlink.perms
-%config(noreplace) %{_sysconfdir}/udev/rules.d/10-svxlink.rules
+/lib/udev/rules.d/10-svxlink.rules
 %{_mandir}/man*/*
 %attr(755,svxlink,daemon) %dir %{_localstatedir}/spool/svxlink
 %attr(755,svxlink,daemon) %dir %{_localstatedir}/spool/svxlink/voice_mail
 %defattr(755,root,root)
 %{_sysconfdir}/init.d/svxlink
 %{_sysconfdir}/init.d/remotetrx
-%{_sysconfdir}/svxlink/.procmailrc/procmailrc
 %defattr(644,root,root)
 %ghost /var/log/*
