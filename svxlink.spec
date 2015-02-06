@@ -5,7 +5,7 @@
 Name:		%{name}
 Summary:	Repeater controller and EchoLink (simplex or repeater)
 Version:	%{main_version}
-Release:	%mkrel 2
+Release:	3
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:	http://downloads.sourceforge.net/%{name}/sounds-en_US-heather-11.11.tar.bz2
 URL:		http://svxlink.sourceforge.net
