@@ -19,7 +19,7 @@ Patch0:		svxlink-11.11.1-gcc-47.patch
 BuildRequires:	glibc-devel
 BuildRequires:	alsa-oss-devel
 BuildRequires:	libsigc++1.2-devel
-BuildRequires:	mng-devel
+BuildRequires:	pkgconfig(libmng) >= 2.0.2
 BuildRequires:	tcl-devel
 BuildRequires:	qt4-devel 
 BuildRequires:	gsm-devel
