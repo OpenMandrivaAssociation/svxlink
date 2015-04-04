@@ -42,12 +42,16 @@ Also, the SvxLink server can act as a repeater controller.
 This is a development version. The released version doesn't build on newer 
 Mandriva Distributions.
 
-%package -n libasync
+#---------------------------------------------------------------
+%define asyncmajor	0	
+%define libasync %mklibname async %{asyncmajor}
+
+%package -n %{libasync}
 Summary: 	Svxlink async libs
 Group: 		System/Libraries
-Version: 	0.17.0
+Version: 	0.18
 
-%description -n libasync
+%description -n %{libasync}
 The Async library is a programming framework that is used to write event driven
 applications. It provides abstractions for file descriptor watches, timers,
 network communications, serial port communications and config file reading.
@@ -66,22 +70,45 @@ audio i/o, filtering, mixing, audio codecs etc.
 This is a development version. The released version doesn't build on newer 
 Mandriva Distributions.
 
-%package -n libasync-devel
+%files -n %{libasync}
+%doc async/ChangeLog
+%defattr(755,root,root)
+%{_libdir}/libasync*.so.*
+%{_libdir}/libasync*.*.so
+#---------------------------------------------------------------
+%define devasync	%mklibname async -d
+
+%package -n %{devasync}
 Summary: 	Svxlink async development files
 Group: 		System/Libraries
-Version: 	0.17.0
-Requires: 	libasync = 0.17.0
+Version: 	0.18
+Requires: 	%{libasync} = %{EVRD}
 Obsoletes:	svxlink-server-devel < 0.11.1-2
 
-%description -n libasync-devel
+%description -n %{devasync}
 The async library development files
 
-%package -n echolib
+%files -n %{devasync}
+%doc doc/async/html
+%{_libdir}/libasyncaudio.so
+%{_libdir}/libasynccore.so
+%{_libdir}/libasynccpp.so
+%{_libdir}/libasyncqt.so
+%dir %{_includedir}/svxlink
+%{_includedir}/svxlink/Async*
+%{_includedir}/svxlink/SigCAudio*.h
+%{_includedir}/svxlink/common.h
+
+#---------------------------------------------------------------
+%define echomajor	0
+%define echolib		%mklibname echolib %{echomajor}
+
+%package -n %{echolib}
 Summary: 	EchoLink communications library
 Group: 		System/Libraries
-Version: 	0.13.1
+Version: 	0.14
 
-%description -n echolib
+%description -n %{echolib}
 EchoLib is a library that is used as a base for writing EchoLink applications.
 It implements the directory server protocol as well as the station to station
 protocol. EchoLink is used to link ham radio stations together over the
@@ -89,15 +116,32 @@ Internet.
 This is a development version. The released version doesn't build on newer 
 Mandriva Distributions.
 
-%package -n echolib-devel
+%files -n %{echolib}
+%doc echolib/ChangeLog
+%defattr(755,root,root)
+%{_libdir}/libecholib*.so.*
+%{_libdir}/libecholib*.*.so
+
+#---------------------------------------------------------------
+%define devecholib	%mklibname echolib -d
+
+%package -n %{devecholib}
 Summary: 	Development files for the EchoLink communications library
 Group: 		System/Libraries
-Version: 	0.13.1
-Requires: 	echolib = 0.13.1
+Version: 	0.14
+Requires: 	%{echolib} = %{EVRD}
 Obsoletes:	svxlink-server-devel < 0.11.1-2
 
-%description -n echolib-devel
+%description -n %{devecholib}
 Development files for the EchoLink communications library
+
+
+%files -n %{devecholib}
+%doc doc/echolib/html
+%{_libdir}/libecholib.so
+%dir %{_includedir}/svxlink
+%{_includedir}/svxlink/EchoLink*
+#---------------------------------------------------------------
 
 %package -n qtel
 Summary: 	The Qt EchoLink Client
@@ -112,6 +156,14 @@ you want, install the svxlink-server package.
 This is a development version. The released version doesn't build on newer 
 Mandriva Distributions.
 
+%files -n qtel
+%doc COPYRIGHT qtel/ChangeLog
+%{_bindir}/qtel
+%{_datadir}/qtel
+%{_datadir}/icons/link.xpm
+%{_datadir}/applications/qtel.desktop
+
+#---------------------------------------------------------------
 %package -n svxlink-server
 Summary: 	SvxLink - A general purpose voice services system
 Version: 	0.11.1
@@ -132,6 +184,37 @@ chosen using a software voter.
 This is a development version. The released version doesn't build on newer 
 Mandriva Distributions.
 
+%files -n svxlink-server
+%doc COPYRIGHT svxlink/ChangeLog
+%{_bindir}/svxlink
+%{_bindir}/remotetrx
+%{_bindir}/siglevdetcal
+%dir %{_libdir}/svxlink
+%{_libdir}/svxlink/Module*.so
+%dir %{_sysconfdir}/%{name}/svxlink.d
+%{_datadir}/svxlink
+%defattr(644,root,root)
+%config(noreplace) %{_sysconfdir}/%{name}/svxlink.conf
+%config(noreplace) %{_sysconfdir}/%{name}/.procmailrc
+%config(noreplace) %{_sysconfdir}/%{name}/svxlink.d/*
+%config(noreplace) %{_sysconfdir}/%{name}/TclVoiceMail.conf
+%config(noreplace) %{_sysconfdir}/logrotate.d/svxlink-server
+%config(noreplace) %{_sysconfdir}/logrotate.d/remotetrx
+%config(noreplace) %{_sysconfdir}/%{name}/remotetrx.conf
+%config(noreplace) %{_sysconfdir}/sysconfig/svxlink
+%config(noreplace) %{_sysconfdir}/sysconfig/remotetrx
+%config(noreplace) %{_sysconfdir}/security/console.perms.d/90-svxlink.perms
+/lib/udev/rules.d/10-svxlink.rules
+%{_mandir}/man*/*
+%attr(755,svxlink,daemon) %dir %{_localstatedir}/spool/svxlink
+%attr(755,svxlink,daemon) %dir %{_localstatedir}/spool/svxlink/voice_mail
+%defattr(755,root,root)
+%{_sysconfdir}/init.d/svxlink
+%{_sysconfdir}/init.d/remotetrx
+%defattr(644,root,root)
+%ghost /var/log/*
+#---------------------------------------------------------------
+
 %prep
 %setup -q -n %{name}-%{main_version}
 %setup -q -D -T -a 1 -n %{name}-%{main_version}
@@ -144,7 +227,7 @@ sed -i -e "s:lgsm:lgsm -lspeex:" qtel/Makefile.default
 
 #LDFLAGS="${LDFLAGS:--Wl,-as-needed}" ; export LDFLAGS
 CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS
-make %{?_smp_mflags}
+%make
 doxygen doxygen.async
 doxygen doxygen.echolib
 
@@ -191,68 +274,4 @@ if [ "$1" -ge "1" ] ; then
  /sbin/service svxlink condrestart >/dev/null 2>&1 || :
 fi
 
-%files -n libasync
-%doc async/ChangeLog
-%defattr(755,root,root)
-%{_libdir}/libasync*.so.*
-%{_libdir}/libasync*.*.so
 
-%files -n libasync-devel
-%doc doc/async/html
-%{_libdir}/libasyncaudio.so
-%{_libdir}/libasynccore.so
-%{_libdir}/libasynccpp.so
-%{_libdir}/libasyncqt.so
-%dir %{_includedir}/svxlink
-%{_includedir}/svxlink/Async*
-%{_includedir}/svxlink/SigCAudio*.h
-%{_includedir}/svxlink/common.h
-
-%files -n echolib
-%doc echolib/ChangeLog
-%defattr(755,root,root)
-%{_libdir}/libecholib*.so.*
-%{_libdir}/libecholib*.*.so
-
-%files -n echolib-devel
-%doc doc/echolib/html
-%{_libdir}/libecholib.so
-%dir %{_includedir}/svxlink
-%{_includedir}/svxlink/EchoLink*
-
-%files -n qtel
-%doc COPYRIGHT qtel/ChangeLog
-%{_bindir}/qtel
-%{_datadir}/qtel
-%{_datadir}/icons/link.xpm
-%{_datadir}/applications/qtel.desktop
-
-%files -n svxlink-server
-%doc COPYRIGHT svxlink/ChangeLog
-%{_bindir}/svxlink
-%{_bindir}/remotetrx
-%{_bindir}/siglevdetcal
-%dir %{_libdir}/svxlink
-%{_libdir}/svxlink/Module*.so
-%dir %{_sysconfdir}/%{name}/svxlink.d
-%{_datadir}/svxlink
-%defattr(644,root,root)
-%config(noreplace) %{_sysconfdir}/%{name}/svxlink.conf
-%config(noreplace) %{_sysconfdir}/%{name}/.procmailrc
-%config(noreplace) %{_sysconfdir}/%{name}/svxlink.d/*
-%config(noreplace) %{_sysconfdir}/%{name}/TclVoiceMail.conf
-%config(noreplace) %{_sysconfdir}/logrotate.d/svxlink-server
-%config(noreplace) %{_sysconfdir}/logrotate.d/remotetrx
-%config(noreplace) %{_sysconfdir}/%{name}/remotetrx.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/svxlink
-%config(noreplace) %{_sysconfdir}/sysconfig/remotetrx
-%config(noreplace) %{_sysconfdir}/security/console.perms.d/90-svxlink.perms
-/lib/udev/rules.d/10-svxlink.rules
-%{_mandir}/man*/*
-%attr(755,svxlink,daemon) %dir %{_localstatedir}/spool/svxlink
-%attr(755,svxlink,daemon) %dir %{_localstatedir}/spool/svxlink/voice_mail
-%defattr(755,root,root)
-%{_sysconfdir}/init.d/svxlink
-%{_sysconfdir}/init.d/remotetrx
-%defattr(644,root,root)
-%ghost /var/log/*
