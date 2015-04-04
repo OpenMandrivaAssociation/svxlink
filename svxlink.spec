@@ -43,7 +43,7 @@ This is a development version. The released version doesn't build on newer
 Mandriva Distributions.
 
 #---------------------------------------------------------------
-%define asyncmajor	0	
+%define asyncmajor	0.18	
 %define libasync %mklibname async %{asyncmajor}
 
 %package -n %{libasync}
@@ -100,7 +100,7 @@ The async library development files
 %{_includedir}/svxlink/common.h
 
 #---------------------------------------------------------------
-%define echomajor	0
+%define echomajor	0.14
 %define echolib		%mklibname echolib %{echomajor}
 
 %package -n %{echolib}
