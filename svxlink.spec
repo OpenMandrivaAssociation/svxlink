@@ -8,6 +8,8 @@ Version:	%{main_version}
 Release:	3
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:	http://downloads.sourceforge.net/%{name}/sounds-en_US-heather-11.11.tar.bz2
+# filering all the crap
+Source100:	svxlink.rpmlintrc
 URL:		http://svxlink.sourceforge.net
 
 Group:		Communications
@@ -49,7 +51,7 @@ Mandriva Distributions.
 %package -n %{libasync}
 Summary: 	Svxlink async libs
 Group: 		System/Libraries
-Version: 	0.18
+Version: 	0.17.0
 
 %description -n %{libasync}
 The Async library is a programming framework that is used to write event driven
@@ -81,7 +83,7 @@ Mandriva Distributions.
 %package -n %{devasync}
 Summary: 	Svxlink async development files
 Group: 		System/Libraries
-Version: 	0.18
+Version: 	0.17.0
 Requires: 	%{libasync} = %{EVRD}
 Obsoletes:	svxlink-server-devel < 0.11.1-2
 
@@ -106,7 +108,7 @@ The async library development files
 %package -n %{echolib}
 Summary: 	EchoLink communications library
 Group: 		System/Libraries
-Version: 	0.14
+Version: 	0.13.1
 
 %description -n %{echolib}
 EchoLib is a library that is used as a base for writing EchoLink applications.
@@ -128,7 +130,7 @@ Mandriva Distributions.
 %package -n %{devecholib}
 Summary: 	Development files for the EchoLink communications library
 Group: 		System/Libraries
-Version: 	0.14
+Version: 	0.13.1
 Requires: 	%{echolib} = %{EVRD}
 Obsoletes:	svxlink-server-devel < 0.11.1-2
 
