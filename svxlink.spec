@@ -10,7 +10,7 @@ Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:	http://downloads.sourceforge.net/%{name}/sounds-en_US-heather-11.11.tar.bz2
 # filering all the crap
 Source100:	svxlink.rpmlintrc
-URL:		http://svxlink.sourceforge.net
+URL:		https://svxlink.sourceforge.net
 
 Group:		Communications
 #files contained in sounds package are licensed under GPLv2
